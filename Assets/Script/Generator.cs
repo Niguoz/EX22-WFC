@@ -11,14 +11,14 @@ public class Generator : MonoBehaviour
         // Define some sample data
         ITopoArray<char> sample = TopoArray.Create(new[]
         {
-            new[]{ '_', '_', '_'},
-            new[]{ '_', '*', '_'},
-            new[]{ '_', '_', '_'},
-        }, periodic: false);
+            new[]{ 'M', 'M', 'M', 'M'},
+            new[]{ 'M', 'P', 'P', 'M'},
+            new[]{ 'M', 'M', 'P', 'M'},
+        }, periodic: true);
         // Specify the model used for generation
         var model = new AdjacentModel(sample.ToTiles());
         // Set the output dimensions
-        var topology = new GridTopology(10, 10, periodic: false);
+        var topology = new GridTopology(15, 10, periodic: false);
         // Acturally run the algorithm
         var propagator = new TilePropagator(model, topology);
         var status = propagator.Run();
@@ -27,12 +27,16 @@ public class Generator : MonoBehaviour
         // Display the results
         for (var y = 0; y < 10; y++)
         {
+            var mapLine = "";
             for (var x = 0; x < 10; x++)
             {
-                Debug.Log(output.Get(x, y));
+                mapLine += output.Get(x, y);
+                var prefab = Resources.Load<GameObject>(output.Get(x, y).ToString());
+                var go = Instantiate(prefab, new Vector3(x, y, 0), Quaternion.identity);
             }
-            Debug.Log("############");
+            Debug.Log(mapLine);
         }
+        Debug.Log("############");
     }
 
 }
